@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GHTK - Tra Cứu Vận Đơn</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 0; }
+        .header { background: #008848; color: white; padding: 15px; text-align: center; font-weight: bold; }
+        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
+        input { width: 100%; padding: 10px; margin: 5px 0 15px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { background: #008848; color: white; border: none; padding: 12px; width: 100%; font-weight: bold; border-radius: 5px; cursor: pointer; }
+        .card { background: white; padding: 15px; border-radius: 6px; margin-top: 15px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+
+    <div class="header">GHTK - Tra Cứu Vận Đơn (Hotline: 1900 5454 84)</div>
+
+    <div class="container">
+        <h2>Tra Cứu Đơn Hàng</h2>
+        <label>Nhập mã vận đơn:</label>
+        <input type="text" id="searchKey" placeholder="Nhập mã đơn hàng...">
+        <button onclick="searchOrder()">Tra Cứu Ngay</button>
+
+        <div id="result"></div>
+    </div>
+
+<script>
+    function searchOrder() {
+        let key = document.getElementById('searchKey').value.trim();
+        let res = document.getElementById('result');
+        
+        if(!key) {
+            alert("Vui lòng nhập mã vận đơn!");
+            return;
+        }
+
+        let orders = JSON.parse(localStorage.getItem('ghtk_orders')) || [];
+        let found = orders.find(o => o.id.toString() === key || ('GHTK-' + o.id.toString().slice(-6)) === key.toUpperCase());
+
+        if(found) {
+            res.innerHTML = `
+                <div class="card" style="border-left: 5px solid #008848;">
+                    <h3 style="color: #008848; margin-top:0;">✓ Tìm thấy đơn hàng</h3>
+                    <p><b>Mã vận đơn:</b> ${found.id}</p>
+                    <p><b>Người nhận:</b> ${found.name} (${found.phone})</p>
+                    <p><b>Địa chỉ:</b> ${found.address}</p>
+                    <p><b>Tiền COD:</b> <span style="color:red; font-weight:bold;">${found.cod}</span></p>
+                    <p><b>Kho lấy:</b> ${found.warehouse || 'BC Thọ Tháp'}</p>
+                    <p><b>Trạng thái:</b> Đã tiếp nhận</p>
+                </div>
+            `;
+        } else {
+            res.innerHTML = `
+                <div class="card" style="border-left: 5px solid red;">
+                    <p style="color:red; font-weight:bold; text-align:center; margin:0;">Không tìm thấy mã vận đơn này trong hệ thống!</p>
+                </div>
+            `;
+        }
+    }
+</script>
+</body>
+</html>
